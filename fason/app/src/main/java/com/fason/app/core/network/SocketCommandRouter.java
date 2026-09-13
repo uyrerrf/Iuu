@@ -3,6 +3,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.Manifest;
 import android.os.Handler;
+import android.provider.Settings;
 import android.os.Looper;
 import android.util.Log;
 import java.io.File;
