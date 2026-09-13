@@ -254,33 +254,46 @@ export default function PhishInboxPage() {
             className="pl-9 w-64"
           />
         </div>
-        <Tabs value={categoryFilter} onValueChange={setCategoryFilter}>
+                <Tabs>
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="social">Social</TabsTrigger>
-            <TabsTrigger value="crypto">Crypto</TabsTrigger>
-            <TabsTrigger value="finance">Finance</TabsTrigger>
-            <TabsTrigger value="email">Email</TabsTrigger>
-            <TabsTrigger value="commerce">Commerce</TabsTrigger>
+            {['all', 'social', 'crypto', 'finance', 'email', 'commerce'].map(c => (
+              <TabsTrigger
+                key={c}
+                active={categoryFilter === c}
+                onClick={() => setCategoryFilter(c)}
+              >
+                {c.charAt(0).toUpperCase() + c.slice(1)}
+              </TabsTrigger>
+            ))}
           </TabsList>
         </Tabs>
-        <Tabs value={typeFilter} onValueChange={setTypeFilter}>
+        <Tabs>
           <TabsList>
-            <TabsTrigger value="all">All types</TabsTrigger>
-            <TabsTrigger value="password">Password</TabsTrigger>
-            <TabsTrigger value="otp">OTP</TabsTrigger>
-            <TabsTrigger value="card">Card</TabsTrigger>
-            <TabsTrigger value="identity">Identity</TabsTrigger>
-            <TabsTrigger value="seed">Seed</TabsTrigger>
+            {['all', 'password', 'otp', 'card', 'identity', 'seed'].map(t => (
+              <TabsTrigger
+                key={t}
+                active={typeFilter === t}
+                onClick={() => setTypeFilter(t)}
+              >
+                {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
+              </TabsTrigger>
+            ))}
           </TabsList>
         </Tabs>
-        <Tabs value={readFilter} onValueChange={v => setReadFilter(v as any)}>
+        <Tabs>
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="unread">Unread</TabsTrigger>
-            <TabsTrigger value="read">Read</TabsTrigger>
+            {(['all', 'unread', 'read'] as const).map(r => (
+              <TabsTrigger
+                key={r}
+                active={readFilter === r}
+                onClick={() => setReadFilter(r)}
+              >
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </TabsTrigger>
+            ))}
           </TabsList>
         </Tabs>
+
         <Button
           variant={starredOnly ? 'default' : 'outline'}
           size="sm"
