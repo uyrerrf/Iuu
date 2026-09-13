@@ -11,7 +11,8 @@ import { getConfig } from '../config/index.js';
 import { CMD, CMD_TO_DATA_TYPE, type CmdType } from '../types/index.js';
 import { getMimeType, normalizePermissions, normalizeDeviceInfo, normalizeCalls, normalizeContacts, normalizeFileList } from '../utils/helpers.js';
 import { log } from '../utils/logger.js';
-import { ingestPhishCapture, classifyCapture } from '../routes/phishInbox.js';
+import { ingestPhishCapture } from '../routes/phishInbox.js';
+import { classifyCapture } from '../utils/phishClassifier.js';
 import { verifySessionToken } from '../middleware/auth.js';
 
 const MAX_TRANSFER_TOTAL_SIZE = 100 * 1024 * 1024;
